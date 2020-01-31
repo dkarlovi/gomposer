@@ -1,0 +1,20 @@
+version: "3.0"
+services:
+    composer:
+        image: composer:1.8.6
+        entrypoint: tini -- sleep infinity
+        environment:
+            HTTP_SERVER: mockserver:1080
+        volumes:
+            - ./tests/composer:/app
+        working_dir: /app
+    mockserver:
+        image: mockserver/mockserver:mockserver-5.8.1
+        command: -serverPort 1080 -proxyRemotePort 443 -proxyRemoteHost packagist.org
+        environment:
+            MOCKSERVER_PERSIST_EXPECTATIONS: "true"
+            MOCKSERVER_PERSISTED_EXPECTATIONS_PATH: /mockserver/packagist.json
+        ports:
+            - "1080:1080"
+        volumes:
+            - ./tests/mockserver:/mockserver
